@@ -7,13 +7,13 @@ class CommentsController < ApplicationController
       redirect_to prototype_path(@comment.prototype)
       # redirect_to tweet_path(@comment.tweet) # 今回の実装には関係ありませんが、このようにPrefixでパスを指定することが望ましいです。
     else
-      @prototype = @comment.prototype
-      @comments = @prototype.comments
+      @prototype = Prototype.find(params[:prototype_id])
+      @comments = @prototype.comments.includes(:user)
       render "prototypes/show", status: :unprocessable_entity
       # views/tweets/show.html.erbのファイルを参照しています。
     end
   end
-  # 省略
+
 
   def show
     @comment = Comment.new
@@ -27,3 +27,6 @@ class CommentsController < ApplicationController
     params.require(:comment).permit(:content).merge(user_id: current_user.id,  prototype_id: params[:prototype_id])
   end
 end
+
+
+
